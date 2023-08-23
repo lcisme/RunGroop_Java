@@ -1,4 +1,4 @@
-package com.example.webproject.sercurity;
+package com.example.webproject.security;
 
 import com.example.webproject.entity.UserEntity;
 import com.example.webproject.repository.UserRepository;

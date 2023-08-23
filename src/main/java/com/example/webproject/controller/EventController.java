@@ -2,7 +2,10 @@ package com.example.webproject.controller;
 
 import com.example.webproject.dto.EventDTO;
 import com.example.webproject.entity.Event;
+import com.example.webproject.entity.UserEntity;
+import com.example.webproject.security.SecurityUtil;
 import com.example.webproject.service.EventService;
+import com.example.webproject.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,22 +20,39 @@ import java.util.List;
 @RequestMapping("/events")
 public class EventController {
     private EventService eventService;
+    private UserService userService;
 
     @Autowired
-    public EventController(EventService eventService) {
+    public EventController(EventService eventService,UserService userService) {
         this.eventService = eventService;
+        this.userService = userService;
     }
     //getAll
     @GetMapping
     public String eventList(Model model){
-     List<EventDTO> events = eventService.findAllEvents();
-     model.addAttribute("events", events);
-     return "event/events-list";
+        UserEntity user = new UserEntity();
+        List<EventDTO> events = eventService.findAllEvents();
+        String username = SecurityUtil.getSessionUser();
+        if (username != null){
+            user = userService.findByUsername(username);
+            model.addAttribute("user",user);
+        }
+        model.addAttribute("user",user);
+        model.addAttribute("events", events);
+        return "event/events-list";
     }
     //viewById
     @GetMapping("/{eventId}")
     public String viewEvent(@PathVariable("eventId") Long eventId, Model model){
+        UserEntity user = new UserEntity();
         EventDTO eventDTO = eventService.findByEventId(eventId);
+        String username = SecurityUtil.getSessionUser();
+        if (username != null){
+            user = userService.findByUsername(username);
+            model.addAttribute("user",user);
+        }
+        model.addAttribute("club",eventDTO);
+        model.addAttribute("user",user);
         model.addAttribute("event", eventDTO);
         return "event/events-detail";
     }

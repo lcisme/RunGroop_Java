@@ -2,7 +2,10 @@ package com.example.webproject.controller;
 
 import com.example.webproject.dto.ClubDTO;
 import com.example.webproject.entity.Club;
+import com.example.webproject.entity.UserEntity;
+import com.example.webproject.security.SecurityUtil;
 import com.example.webproject.service.ClubService;
+import com.example.webproject.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,15 +19,24 @@ import java.util.List;
 @RequestMapping("/clubs")
 public class ClubController {
     private ClubService clubService;
+    private UserService userService;
 
     @Autowired
-    public ClubController(ClubService clubService) {
+    public ClubController(ClubService clubService,UserService userService) {
         this.clubService = clubService;
+        this.userService = userService;
     }
     // getAll
     @GetMapping
     public String listClubs(Model model){
+        UserEntity user = new UserEntity();
         List<ClubDTO> clubs = clubService.findAllClubs();
+        String username = SecurityUtil.getSessionUser();
+        if (username != null){
+            user = userService.findByUsername(username);
+            model.addAttribute("user",user);
+        }
+        model.addAttribute("user",user);
         model.addAttribute("clubs", clubs);
         return "club/clubs-list";
     }
@@ -65,6 +77,13 @@ public class ClubController {
     // detail
     @GetMapping("/{clubId}")
     public String clubDetail(@PathVariable("clubId") Long clubId, Model model){
+        UserEntity user = new UserEntity();
+        String username = SecurityUtil.getSessionUser();
+        if (username != null){
+            user = userService.findByUsername(username);
+            model.addAttribute("user",user);
+        }
+        model.addAttribute("user",user);
         ClubDTO clubDTO = clubService.findClubById(clubId);
         model.addAttribute("club", clubDTO);
         return "club/clubs-detail";

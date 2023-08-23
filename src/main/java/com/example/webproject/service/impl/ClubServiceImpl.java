@@ -5,7 +5,7 @@ import com.example.webproject.entity.Club;
 import com.example.webproject.entity.UserEntity;
 import com.example.webproject.repository.ClubRepository;
 import com.example.webproject.repository.UserRepository;
-import com.example.webproject.sercurity.SecurityUtil;
+import com.example.webproject.security.SecurityUtil;
 import com.example.webproject.service.ClubService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
